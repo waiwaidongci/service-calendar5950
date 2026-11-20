@@ -4,6 +4,7 @@ from src.services.validation import validate_source,validate_policy
 from src.services.audit import log
 import uuid
 def save_source(db,user,data,id=None):
+ if data.get('closed') in ('',None): data['closed']=None
  validate_source(data)
  obj=db.get(Source,id) if id else Source(natural_key='user-'+uuid.uuid4().hex)
  if not obj: raise HTTPException(404,'底稿不存在')

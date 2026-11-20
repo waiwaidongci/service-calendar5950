@@ -11,6 +11,8 @@ def demo_rows():
  rng=random.Random(42);rows=[]
  for i in range(240):
   day=1+i%20;rows.append({'period':'2026-11','department':['数据建模组','数据采样组','数据核验组'][i%3],'opened':f'2026-11-{day:02}T10:30:00+08:00','closed':f'2026-11-{day:02}T16:30:00+08:00','priority':['普通','紧急'][i%2]})
+ for i in range(12):
+  day=5+i;rows.append({'period':'2026-11','department':['数据建模组','数据采样组','数据核验组'][i%3],'opened':f'2026-11-{day:02}T09:30:00+08:00','closed':None,'priority':['普通','紧急'][i%2]})
  return rows
 
 def seed():

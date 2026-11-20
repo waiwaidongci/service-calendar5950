@@ -1,7 +1,7 @@
 import os,logging
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
-from src.config.database import Base,engine
+from src.config.database import Base,engine,migrate
 from src.config.settings import CONFIG,REDIS_URL
 from src.models import identity,source,run
 from src.routes import auth,source as source_routes,reports,deliveries,audits
@@ -10,6 +10,7 @@ from src.middlewares.rate import RateLimit
 @asynccontextmanager
 async def lifespan(app):
  Base.metadata.create_all(engine)
+ migrate()
  if os.getenv('SEED_DEMO')=='true':
   try:
    from scripts.seed_demo import seed

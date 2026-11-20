@@ -7,13 +7,27 @@ def validate_source(d):
  if not isinstance(d,dict) or set(d)!=set(CONFIG['fields']): raise ValueError('底稿字段必须与业务字段一致')
  for key in ('period','department'):
   if not isinstance(d[key],str) or not 1<=len(d[key])<=100: raise ValueError(key+'不能为空或过长')
- from datetime import datetime
- from zoneinfo import ZoneInfo
- try:
-  a=datetime.fromisoformat(d['opened']);b=datetime.fromisoformat(d['closed'])
- except Exception: raise ValueError('时间须为ISO格式')
- if not a.tzinfo or not b.tzinfo or b<a or (b-a).total_seconds()>366*86400: raise ValueError('时间须带时区、结束不早于开始且范围不超过366天')
  if not isinstance(d['priority'],str) or not d['priority']:raise ValueError('优先级不能为空')
+ from datetime import datetime
+ try:
+  a=datetime.fromisoformat(d['opened'])
+ except Exception: raise ValueError('时间须为ISO格式')
+ if not a.tzinfo: raise ValueError('时间须带时区')
+ closed=d.get('closed')
+ if closed in ('',None): return
+ try:
+  b=datetime.fromisoformat(closed)
+ except Exception: raise ValueError('时间须为ISO格式')
+ if not b.tzinfo or b<a or (b-a).total_seconds()>366*86400: raise ValueError('时间须带时区、结束不早于开始且范围不超过366天')
+def validate_cutoff(ts):
+ if ts in ('',None): return None
+ if not isinstance(ts,str): raise ValueError('截点须为ISO时间字符串')
+ from datetime import datetime
+ try:
+  dt=datetime.fromisoformat(ts)
+ except Exception: raise ValueError('截点须为ISO时间')
+ if not dt.tzinfo: raise ValueError('截点须带时区')
+ return ts
 def validate_policy(d):
  if not isinstance(d,dict) or not isinstance(d.get('version'),str) or not 2<=len(d['version'])<=120: raise ValueError('口径版本名不合法')
  from zoneinfo import ZoneInfo
